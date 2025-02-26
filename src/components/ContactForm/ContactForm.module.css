@@ -1,17 +1,66 @@
-.form {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.formStyle {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 20px;
-  padding: 30px;
+  padding: 20px;
   width: 100%;
   max-width: 400px;
-  border: 1px solid #757272;
-  border-radius: 5px;
-  background-color: whitesmoke;
+  margin: 0 auto;
 }
-.error {
-  color: rgb(187, 9, 9);
+
+.submitBtn {
+  display: block;
+  width: 120px;
+  height: 40px;
+  background-color: #bac24e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.4s ease;
+}
+
+.submitBtn:hover {
+  background-color: #e6f14c;
+}
+
+.submitBtn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.labelText {
+  text-align: left;
+  width: 100%;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="email"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="tel"]:focus,
+input[type="email"]:focus {
+  border-color: magenta;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.errorMessage {
+  color: red;
+  font-size: 12px;
 }

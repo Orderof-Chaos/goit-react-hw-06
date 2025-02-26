@@ -1,63 +1,87 @@
 import s from "./ContactForm.module.css";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-const ContactForm = ({ handleContactPlus }) => { 
-    
-    const onlyLaters = /^[A-Za-zА-Яа-яЄєІіЇїҐґ-\s]+$/;
+import { addContact } from "../../redux/contactsSlice";
 
-    const onlyNumbers = /^[0-9]+$/;
-
-    const validSchema = Yup.object().shape({
+const ContactForm = () => {
+  const contacts = useSelector((state) => state.contacts.contacts.items);
+  const dispatch = useDispatch();
+  const initialValues = {
+    name: "",
+    phone: "",
+  };
+  const onlyLaters = /^[A-Za-zА-Яа-яЇїІіЄєҐґ'’\s]+$/;
+  const phoneValidation = /^\+?\d{9,15}$/;
+  const applySchema = Yup.object().shape({
         name: Yup.string()
             .required("this field is required")
             .min(3, "at least 3 symbols")
             .max(25, "no more than 25 characters")
             .matches(onlyLaters, "only laters!"),
-        number: Yup.string()
-            .matches(onlyNumbers, "wrong phone number")
+        phone: Yup.string()
+            .matches(phoneValidation, "wrong phone number")
             .required("this field is required"),
-    });
+  });
+    
+  const handleSubmit = (values, actions) => {
+    
+    const isCopy = contacts.some(
+      (contact) =>
+        contact.name.toLowerCase().trim() ===
+          values.name.toLowerCase().trim() && contact.phone === values.phone
+    );
 
-    const handleSubmit = (values, actions) => {
-        handleContactPlus(values.name, values.number);
-        actions.resetForm();
+      if (isCopy) {
+          actions.setSubmitting(false);
+          return;
+      }
+    const newContact = {
+      name: values.name,
+      phone: values.phone,
+      id: crypto.randomUUID(),
     };
+    dispatch(addContact(newContact));
+    actions.resetForm();
+  };
 
-    return (
-        <Formik initialValues={{
-            name: "",
-            number: '',
-        }}
-            onSubmit={handleSubmit}
-        validationSchema={validSchema}>
-            <Form className={s.form}>
-                <label>
-                    <p>Name</p>
-                    <Field type="text" name="name"  />
-                    <ErrorMessage
-                        name="name"
-                        component="p"
-                        className={s.error}
-                    />
-                </label>
-                <label>
-                    <p>Phone number</p>
-                    <Field
-                        type="text"
-                        name="number"
-                    />
-                    <ErrorMessage
-                        name="number"
-                        component="p"
-                        className={s.error}
-                    />
-                </label>
-                <button
-                    type="submit">
-                    Save contact
-                </button>
-            </Form>
-        </Formik>
-    )
-}
-export default ContactForm
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validationSchema={applySchema}
+    >
+      <Form>
+        <div className={s.formStyle}>
+          <label className={s.labelText}>
+            <p>Name</p>
+            <Field type="text" name="name" placeholder="Enter name" />
+            <ErrorMessage
+              className={s.errorMessage}
+              name="name"
+              component="p"
+            />
+          </label>
+          <label className={s.labelText}>
+            <p>Phone</p>
+            <Field
+              type="text"
+              name="phone"
+              placeholder="enter phone number"
+            />
+            <ErrorMessage
+              className={s.errorMessage}
+              name="phone"
+              component="p"
+            />
+          </label>
+          <button className={s.submitBtn} type="submit">
+            Save
+          </button>
+        </div>
+      </Form>
+    </Formik>
+  );
+};
+
+export default ContactForm;
